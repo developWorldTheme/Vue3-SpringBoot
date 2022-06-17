@@ -1,0 +1,75 @@
+
+
+plugins {
+	id 'org.springframework.boot' version '2.7.0'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id "com/github-node-gradle.node" version: "3.1.0"
+	id 'java'
+	id 'war'
+}
+
+node {
+	version = '16.14.2'
+	npmVersion = '8.5.0'
+	download: true
+	worDir = file("${project.buildDir}/nodejs")
+	npmWorkDir = file("${project.buildDir}/npm")
+}
+
+group = 'com.example.backend'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '18'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+// //이미 빌드된 파일 삭제
+// task deleteVueArtifact(type: Delete) {
+//     delete "src/main/resources/static"
+// }
+
+// //npm install
+// task frontNpmInstall(type: NpmTask) {
+//     workingDir = file("${project.projectDir}/src/frontend")
+//     args = ['install']
+// }
+
+// //npm run build
+// task npmBuild(type: NpmTask, dependsOn: ['deleteVueArtifact', 'frontNpmInstall']) {
+//     workingDir = file("${project.projectDir}/src/vuerontend")
+//     args = ['run', 'build']
+// }
+processResources.dependsOn 'npmBuild'
+repositories {
+	mavenCentral()
+}
+
+
+compile("org.springframework.boot:spring-boot-starter-security")
+dependencies {
+	implementation group: 'org.mybatis.spring.boot', name: 'mybatis-spring-boot-autoconfigure', version: '2.2.2'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	compileOnly 'org.projectlombok:lombok'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	runtimeOnly 'com.h2database:h2'
+	runtimeOnly 'com.microsoft.sqlserver:mssql-jdbc'
+	annotationProcessor 'org.projectlombok:lombok'
+	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.security:spring-security-test'
+
+
+
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+
+
